@@ -14,6 +14,7 @@ import Metrics from "./metrics";
 import Footer from "./footer";
 import GluonReactor from "@/blockchain/GluonReactor.sol/GluonReactor.json";
 import ERC20 from "@/blockchain/ERC20.sol/ERC20.json";
+import { toast } from "@/hooks/use-toast";
 
 const { abi } = GluonReactor;
 const { erc20Abi } = ERC20;
@@ -146,8 +147,15 @@ export default function Interaction({
 
         const receipt = await waitForTransactionReceipt(config, { hash });
         console.log("Fission successful:", receipt);
+        toast({
+          title: "Fission successful",
+        });
       } catch (error) {
         console.error("Fission failed:", error);
+        toast({
+          title: "Fission successful",
+          description: error instanceof Error ? error.message : "Unknown error",
+        });
       }
     }
 
@@ -168,8 +176,15 @@ export default function Interaction({
 
         const receipt = await waitForTransactionReceipt(config, { hash });
         console.log("Fusion successful:", receipt);
+        toast({
+          title: "Fusion successful",
+        });
       } catch (error) {
         console.error("Fusion failed:", error);
+        toast({
+          title: "Fusion successful",
+          description: error instanceof Error ? error.message : "Unknown error",
+        });
       }
     }
 
@@ -187,8 +202,15 @@ export default function Interaction({
 
         const receipt = await waitForTransactionReceipt(config, { hash });
         console.log("Stable Token Stake successful:", receipt);
+        toast({
+          title: "Stable Token Stake successful",
+        });
       } catch (error) {
         console.error("Stable Token Stake failed:", error);
+        toast({
+          title: "Stable Token Stake failed",
+          description: error instanceof Error ? error.message : "Unknown error",
+        });
       }
     }
 
@@ -206,8 +228,15 @@ export default function Interaction({
 
         const receipt = await waitForTransactionReceipt(config, { hash });
         console.log("Reserve Token Stake successful:", receipt);
+        toast({
+          title: "Reserve Token Stake successful",
+        });
       } catch (error) {
         console.error("Reserve Token Stake failed:", error);
+        toast({
+          title: "Reserve Token Stake failed",
+          description: error instanceof Error ? error.message : "Unknown error",
+        });
       }
     }
 
@@ -224,9 +253,16 @@ export default function Interaction({
         });
 
         const receipt = await waitForTransactionReceipt(config, { hash });
-        console.log("Stable Token Stake successful:", receipt);
+        console.log("Stable Token Unstake successful:", receipt);
+        toast({
+          title: "Stable Token Unstake successful",
+        });
       } catch (error) {
-        console.error("Stable Token Stake failed:", error);
+        console.error("Stable Token Unstake failed:", error);
+        toast({
+          title: "Stable Token Unstake failed",
+          description: error instanceof Error ? error.message : "Unknown error",
+        });
       }
     }
 
@@ -243,9 +279,16 @@ export default function Interaction({
         });
 
         const receipt = await waitForTransactionReceipt(config, { hash });
-        console.log("Reserve Token Stake successful:", receipt);
+        console.log("Reserve Token Unstake successful:", receipt);
+        toast({
+          title: "Reserve Token Unstake successful",
+        });
       } catch (error) {
-        console.error("Reserve Token Stake failed:", error);
+        console.error("Reserve Token Unstake failed:", error);
+        toast({
+          title: "Reserve Token Unstake failed",
+          description: error instanceof Error ? error.message : "Unknown error",
+        });
       }
     }
   };

@@ -1,4 +1,4 @@
-// import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/toaster';
 import Navbar from '@/components/navbar';
 import Web3ModalProvider from '@/wagmi/provider/web3-modal';
 import { headers } from 'next/headers'
@@ -18,7 +18,7 @@ export default async function ApplicationLayout({
             <Web3ModalProvider>
             <Navbar />
             <main className="h-full pt-[70px]">{children}</main>
-            {/* <Toaster /> */}
+            <Toaster />
             </Web3ModalProvider>
         </div>
     );

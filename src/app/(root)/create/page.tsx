@@ -10,6 +10,7 @@ import { writeContract, waitForTransactionReceipt } from "@wagmi/core";
 import { config } from "@/wagmi/config";
 import GluonTokenFactory from "@/blockchain/GluonTokenFactory.sol/GluonTokenFactory.json";
 import { useChainId } from 'wagmi';
+import { toast } from "@/hooks/use-toast";
 
 const { abi } = GluonTokenFactory;
 
@@ -62,23 +63,31 @@ export default function Dashboard() {
 
       // Prepare contract parameters with default values
       const params = {
-        tokenAddress: formData.token_address_existing_erc_20_token,
-        neutronName: formData.name || "",
-        neutronSymbol: formData.symbol || "",
-        protonName: formData.name || "",
-        protonSymbol: formData.symbol || "",
-        treasury: formData.treasury_address,
-        initialTreasuryFee: formData.initial_treasury_fee || 0,
-        treasuryRevenueTarget: formData.treasury_revenue_target || 0,
-        criticalRatio: formData.critical_ratio || 0,
-        targetRatio: formData.target_ratio || 0,
-        feeFission: formData.fee_for_fission || 0,
-        feeFusion: formData.fee_for_fusion || 0,
-        decayRate: formData.decay_rate || 0,
-        denominator: formData.denominator || 1000000000000000000,
-        vaultFee: formData.reserve_fee || 0,
-        vaultCreatorFee: formData.vault_creator_fee || 0,
-        stableOrderFee: formData.dev_fee || 0,
+        // Token details
+        tokenAddress: formData.token_address_existing_erc_20_token || "",
+        
+        // Stablecoin details
+        neutronName: allFormData.stable?.name || "Stable Tokeon of Some Awesome Coin",
+        neutronSymbol: allFormData.stable?.symbol || "SACN",
+        
+        // Reserve token details
+        protonName: allFormData.reserve?.name || "Volatile Tokeon of Some Awesome Coin",
+        protonSymbol: allFormData.reserve?.symbol || "SACP",
+        
+        // Treasury details
+        treasury: formData.treasury_address || "",
+        
+        // Fees and ratios - matching the Foundry command values
+        initialTreasuryFee: formData.initial_treasury_fee || "1000",
+        treasuryRevenueTarget: formData.treasury_revenue_target || "10000",
+        criticalRatio: formData.critical_ratio || "5000",
+        targetRatio: formData.target_ratio || "5000",
+        feeFission: formData.fee_for_fission || "100",
+        feeFusion: formData.fee_for_fusion || "1",
+        decayRate: formData.decay_rate || "1",
+        vaultFee: formData.reserve_fee || "10",
+        vaultCreatorFee: formData.vault_creator_fee || "10",
+        stableOrderFee: formData.dev_fee || "10"
       };
 
       const factoryAddress = getFactoryAddress(chainId);
@@ -91,23 +100,22 @@ export default function Dashboard() {
         address: factoryAddress as `0x${string}`,
         functionName: "createGluonReactor",
         args: [
-          params.tokenAddress,
+          params.tokenAddress as `0x${string}`,
           params.neutronName,
           params.neutronSymbol,
           params.protonName,
           params.protonSymbol,
-          parseInt(params.denominator),
-          params.treasury,
-          parseInt(params.initialTreasuryFee),
-          parseInt(params.treasuryRevenueTarget),
-          parseInt(params.criticalRatio),
-          parseInt(params.targetRatio),
-          parseInt(params.feeFission),
-          parseInt(params.feeFusion),
-          parseInt(params.decayRate),
-          parseInt(params.vaultFee),
-          parseInt(params.vaultCreatorFee),
-          parseInt(params.stableOrderFee),
+          params.treasury as `0x${string}`,
+          BigInt(params.initialTreasuryFee),
+          BigInt(params.treasuryRevenueTarget),
+          BigInt(params.criticalRatio),
+          BigInt(params.targetRatio),
+          BigInt(params.feeFission),
+          BigInt(params.feeFusion),
+          BigInt(params.decayRate),
+          BigInt(params.vaultFee),
+          BigInt(params.vaultCreatorFee),
+          BigInt(params.stableOrderFee),
         ],
         value: BigInt(0),
       });
@@ -125,8 +133,18 @@ export default function Dashboard() {
       console.log("Receipt: ", receipt);
       console.log("Deployed Contract Address:", formattedAddress);
 
+      toast({
+        title: "Deployed Contract Address",
+        description: formattedAddress,
+      })
+
     } catch (error) {
       console.error("Error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error instanceof Error ? error.message : "Unknown error",
+      })
     } finally {
       setIsSubmitting(false);
     }
@@ -184,7 +202,6 @@ export default function Dashboard() {
                 { placeholder: "Fee for Fission", type: "number" },
                 { placeholder: "Fee for Fusion", type: "number" },
                 { placeholder: "Decay Rate", type: "number" },
-                { placeholder: "Denominator", type: "number" },
               ]}
               onDataChange={(data) => updateFormData("ratios", data)}
             />
